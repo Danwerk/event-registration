@@ -5,6 +5,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B7B466F4-7438-4C7C-AC82-64C6F3830330}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APP", "APP", "{230B477A-5AB1-41C7-848B-0BC23F9C1D73}"
