@@ -17,8 +17,8 @@
                 <img src="~/img/logo.svg" alt="Logo" style="height: 50px;" />
             </div>
             <nav class="nav">
-                <a class="nav-link d-flex align-items-center justify-content-center bg-primary text-white h-100" asp-controller="Home" asp-action="Index">AVALEHT</a>
-                <a class="nav-link d-flex align-items-center justify-content-center h-100" asp-controller="Events" asp-action="Create">ÜRITUSE LISAMINE</a>
+                <a class="nav-link d-flex align-items-center justify-content-center h-100 @(ViewContext.RouteData.Values["controller"]!.ToString() == "Home" ? "bg-darker-primary text-white" : "text-dark") " asp-controller="Home" asp-action="Index">AVALEHT</a>
+                <a class="nav-link d-flex align-items-center justify-content-center h-100 @(ViewContext.RouteData.Values["controller"]!.ToString() == "Events" ? "bg-darker-primary text-white" : "text-dark")" asp-controller="Events" asp-action="Create">ÜRITUSE LISAMINE</a>
             </nav>
         </div>
 
@@ -34,9 +34,49 @@
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
+<footer class="bg-dark text-light py-5">
     <div class="container">
-        &copy; 2025 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Curabitur</h5>
+                <ul class="list-unstyled">
+                    <li>Emauris</li>
+                    <li>Kfringilla</li>
+                    <li>Oin magna sem</li>
+                    <li>Kelementum</li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Fusce</h5>
+                <ul class="list-unstyled">
+                    <li>Econstectur</li>
+                    <li>Ksollitcudin</li>
+                    <li>Omvulputate</li>
+                    <li>Nunc fringilla tellu</li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Kontakt</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Peakontor: Tallinnas</strong></li>
+                    <li>Väike-Ameerika 1, 11415 Tallinn</li>
+                    <li>Telefon: 605 4450</li>
+                    <li>Faks: 605 3186</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3">
+                <h5 class="invisible">Pealkiri</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Harukontor: Võrus</strong></li>
+                    <li>Oja tn 7 (külastusaadress)</li>
+                    <li>Telefon: 605 3330</li>
+                    <li>Faks: 605 3155</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

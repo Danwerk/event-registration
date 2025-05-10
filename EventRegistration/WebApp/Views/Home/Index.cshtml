@@ -4,12 +4,12 @@
 
 @model WebApp.Models.EventViewModel
 
-<div class="container my-5">
+<div class="container-fluid my-2 px-0">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-10 ">
             <div class="row h-100">
                 <!-- Vasak pool:tekst -->
-                <div class="col-md-6 d-flex align-items-center bg-primary text-white p-4">
+                <div class="col-md-6 d-flex align-items-center bg-darker-primary text-white p-4">
                     <p class="mb-0">
                         Sed nec elit vestibulum, <b>tincidunt orci</b> et, sagittis ex.<br/>
                         Vestibulum rutrum <b>neque suscipit</b> ante mattis maximus.<br/>
@@ -29,13 +29,13 @@
     int i;
 }
 
-<div class="container my-2">
+<div class="container-fluid my-2 px-0">
     <div class="row justify-content-center" style="min-height: 300px;">
         <div class="col-md-10">
             <div class="row h-100 ">
                 <!-- vasak -->                
-                <div class="col-md-6 d-flex flex-column mb-4">
-                    <div class="bg-primary text-white p-2">
+                <div class="col-md-6 d-flex flex-column mb-4 ps-0">
+                    <div class="bg-darker-primary p-2">
                         <h5 class="mb-0 text-center">Tulevased üritused</h5>
                     </div>
 
@@ -68,8 +68,8 @@
                     </div>
                 </div>
                 <!-- parem -->
-                <div class="col-md-6 d-flex flex-column mb-4">
-                    <div class="bg-primary text-white p-2">
+                <div class="col-md-6 d-flex flex-column mb-4 pe-0">
+                    <div class="bg-darker-primary p-2">
                         <h5 class="mb-0 text-center">Toimunud üritused</h5>
                     </div>
 
@@ -92,7 +92,7 @@
                                         @*     OSAVÕTJAD *@
                                         @* </a> *@
 
-                                        <a href="#" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
+                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
                                         <a href="#" class="text-dark ms-2">
                                             <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
                                         </a>
