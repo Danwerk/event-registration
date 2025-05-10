@@ -2,7 +2,111 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model WebApp.Models.EventViewModel
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row h-100">
+                <!-- Vasak pool:tekst -->
+                <div class="col-md-6 d-flex align-items-center bg-primary text-white p-4">
+                    <p class="mb-0">
+                        Sed nec elit vestibulum, <b>tincidunt orci</b> et, sagittis ex.<br/>
+                        Vestibulum rutrum <b>neque suscipit</b> ante mattis maximus.<br/>
+                        Nulla non sapien <b>viverra, lobortis lorem non</b>, accumsan metus.
+                    </p>
+                </div>
+
+                <!-- Parem pool: Pilt -->
+                <div class="col-md-6 d-flex align-items-center justify-content-center bg-white p-0">
+                    <img src="~/img/pilt.jpg" class="img-fluid" alt="Pilt" style="max-height: 300px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    int i;
+}
+
+<div class="container my-2">
+    <div class="row justify-content-center" style="min-height: 300px;">
+        <div class="col-md-10">
+            <div class="row h-100 ">
+                <!-- vasak -->                
+                <div class="col-md-6 d-flex flex-column mb-4">
+                    <div class="bg-primary text-white p-2">
+                        <h5 class="mb-0 text-center">Tulevased üritused</h5>
+                    </div>
+
+                    <div class="bg-white p-3 border flex-grow-1 d-flex flex-column justify-content-between">
+                        <ol class="list-unstyled">
+                            @{
+                                i = 1;
+                            }
+                            @foreach (var item in Model.FutureEvents)
+                            {
+                                <li class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                    <div class="d-flex">
+                                        <div class="me-2">@($"{i}.")</div>
+                                        <div>@item.Name</div>
+                                    </div>
+                                    <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
+                                    <div class="text-nowrap">
+                                        <a href="#" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
+                                        <a href="#" class="text-dark ms-2">
+                                            <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
+                                        </a>
+                                    </div>
+                                </li>
+                                i++;
+                            }
+                        </ol>
+                        <div class="mt-3 text-start">
+                            <a asp-controller="Events" asp-action="Create" class="text-dark text-decoration-none">LISA ÜRITUS</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- parem -->
+                <div class="col-md-6 d-flex flex-column mb-4">
+                    <div class="bg-primary text-white p-2">
+                        <h5 class="mb-0 text-center">Toimunud üritused</h5>
+                    </div>
+
+                    <div class="bg-white p-3 border flex-grow-1 d-flex flex-column justify-content-between">
+                        <ol class="list-unstyled">
+                            @{
+                                i = 1;
+                            }
+                            @foreach (var item in Model.PastEvents)
+                            {
+                                <li class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                    <div class="d-flex">
+                                        <div class="me-2">@($"{i}.")</div>
+                                        <div>@item.Name</div>
+                                    </div>
+                                    <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
+                                    <div class="text-nowrap">
+                                        @* <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" *@
+                                        @*    class="text-secondary fw-bold text-decoration-none"> *@
+                                        @*     OSAVÕTJAD *@
+                                        @* </a> *@
+
+                                        <a href="#" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
+                                        <a href="#" class="text-dark ms-2">
+                                            <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
+                                        </a>
+                                    </div>
+                                </li>
+                                i++;
+                            }
+                        </ol>
+                        <div class="mt-3 text-start">
+                            @* <a asp-controller="Events" asp-action="Create" class="text-dark text-decoration-none">LISA ÜRITUS</a> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

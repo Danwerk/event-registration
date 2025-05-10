@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
@@ -7,15 +8,26 @@ namespace WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IAppUOW _uow;
 
-    public HomeController(ILogger<HomeController> logger)
+
+    public HomeController(ILogger<HomeController> logger, IAppUOW uow)
     {
         _logger = logger;
+        _uow = uow;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var events = await _uow.EventRepository.AllAsync();
+        var now = DateTime.UtcNow;
+
+        var vm = new EventViewModel
+        {
+            FutureEvents = events.Where(e => e.DateTime > now).OrderBy(e => e.DateTime).ToList(),
+            PastEvents = events.Where(e => e.DateTime <= now).OrderByDescending(e => e.DateTime).ToList(),
+        };
+        return View(vm);
     }
 
     public IActionResult Privacy()

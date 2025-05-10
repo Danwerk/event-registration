@@ -1,0 +1,74 @@
+@model App.Domain.Event
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row h-100" style="min-height: 100px;">
+                <!-- Vasak pool -->
+                <div class="col-auto d-flex align-items-center bg-primary text-white px-3">
+                    <h4 class="mb-0">Ürituse lisamine</h4>
+                </div>
+
+                <!-- Parem pool-->
+                <div class="col p-0">
+                    <img src="~/img/libled.jpg" class="img-fluid" alt="Libled"
+                         style="height: 100px; width: 100%; object-fit: cover;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h4 class="text-dark mb-4">Ürituse lisamine</h4>
+
+            <!-- Vorm -->
+            <form asp-action="Create">
+                <div class="mb-3 row">
+                    <label asp-for="Name" class="col-sm-3 col-form-label">Ürituse nimi:</label>
+                    <div class="col-sm-9">
+                        <input asp-for="Name" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label asp-for="DateTime" class="col-sm-3 col-form-label">Toimumisaeg:</label>
+                    <div class="col-sm-9">
+                        <input asp-for="DateTime" class="form-control" placeholder="pp.kk.aaaa hh:mm" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label asp-for="Location" class="col-sm-3 col-form-label">Koht:</label>
+                    <div class="col-sm-9">
+                        <input asp-for="Location" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-4 row">
+                    <label asp-for="AdditionalInfo" class="col-sm-3 col-form-label">Lisainfo:</label>
+                    <div class="col-sm-9">
+                        <textarea asp-for="AdditionalInfo" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Nupud -->
+                <div class="d-flex">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">Tagasi</a>
+                    <button type="submit" class="btn btn-primary">Lisa</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

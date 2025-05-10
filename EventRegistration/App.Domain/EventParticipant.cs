@@ -4,10 +4,10 @@ namespace App.Domain;
 
 public class EventParticipant : DomainEntityId
 {
-    public int EventId { get; set; }
+    public Guid EventId { get; set; }
     public Event? Event { get; set; }
 
-    public int ParticipantId { get; set; }
+    public Guid ParticipantId { get; set; }
     public Participant? Participant { get; set; }
 
 }

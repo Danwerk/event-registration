@@ -8,6 +8,8 @@ Host it...
 ```
 dotnet tool install --global dotnet-ef
 dotnet tool update --global dotnet-ef
+dotnet tool update -g dotnet-aspnet-codegenerator
+
 ```
 
 
@@ -34,7 +36,8 @@ Microsoft.EntityFrameworkCore.SqlServer
 
 cd WebApp
 ```
-dotnet aspnet-codegenerator controller -name EventsController       -actions -m  Event    -dc AppDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
+dotnet aspnet-codegenerator controller -name EventsController       -actions -m  Event    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
+dotnet aspnet-codegenerator controller -name ParticipantsController       -actions -m  Participant    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 ```
 
 
@@ -49,7 +52,7 @@ dotnet aspnet-codegenerator controller -name UnitsController -actions -m App.Dom
 Generate Identity UI
 ~~~bash
 - cd WebApp
-dotnet aspnet-codegenerator identity -dc App.DAL.EF.ApplicationDbContext --userClass AppUser -f
+dotnet aspnet-codegenerator identity -dc App.DAL.EF.AppDbContext --userClass AppUser -f
 ~~~
 
 # DOCKER
@@ -65,7 +68,3 @@ dotnet aspnet-codegenerator identity -dc App.DAL.EF.ApplicationDbContext --userC
    **interface is derived from IBaseRepository**
 2. In App.DAL.EF directory called Repositories create actual Repositories that implements previously created interfaces
 3. Use Repositories in Controllers.
-
-
-# Restaurant Opening Hours - Representation of Days of the Week
-This part outlines the agreed-upon format and values for representing days of the week in the Restaurant Opening Hours application. Consistency between the frontend and backend ensures smooth communication and data handling.
