@@ -10,7 +10,6 @@ public interface IEventParticipantRepository : IBaseRepository<EventParticipant>
 
 public interface IEventParticipantRepositoryCustom<TEntity>
 {
-
     //add here shared methods between repo and service
-    
+    public Task<IEnumerable<TEntity>> AllAsync(Guid eventId);
 }

@@ -1,41 +1,172 @@
-@model IEnumerable<App.Domain.EventParticipant>
+@model WebApp.Models.EventParticipantViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Osavõtjad";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Event)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Participant)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Event!.AdditionalInfo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Participant!.AdditionalInfo)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="container my-2">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row h-100" style="min-height: 100px;">
+                <!-- Vasak pool -->
+                <div class="col-auto d-flex align-items-center bg-darker-primary text-white px-3">
+                    <h4 class="mb-0">Osavõtjad</h4>
+                </div>
+
+                <!-- Parem pool-->
+                <div class="col p-0">
+                    <img src="~/img/libled.jpg" class="img-fluid" alt="Libled"
+                         style="height: 100px; width: 100%; object-fit: cover;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h2 class="text-dark mb-4">Ürituse info</h2>
+
+            <div class="mb-4">
+                <dl class="row">
+                    <dt class="col-sm-3">Ürituse nimi:</dt>
+                    <dd class="col-sm-9">@Model.Event.Name</dd>
+
+                    <dt class="col-sm-3">Toimumisaeg:</dt>
+                    <dd class="col-sm-9">@Model.Event.DateTime.ToString("dd.MM.yyyy")</dd>
+
+                    <dt class="col-sm-3">Koht:</dt>
+                    <dd class="col-sm-9">@Model.Event.Location</dd>
+                </dl>
+            </div>
+
+
+            <h4>Osavõtjad:</h4>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                    <tbody>
+                    @for (var i = 0; i < Model.Participants.Count; i++)
+                    {
+                        var participant = Model.Participants[i];
+                        <tr>
+                            <td class="text-start" style="width: 40%;">
+                                @($"{i + 1}. {participant.Name}")
+                            </td>
+                            <td class="text-center" style="width: 30%;">
+                                @participant.Code
+                            </td>
+                            <td class="text-end" style="width: 30%;">
+                                <a asp-controller="Participants" asp-action="Details" asp-route-id="@participant.Id"
+                                   class="text-secondary fw-bold me-3 text-decoration-none">
+                                    VAATA
+                                </a>
+                                <form asp-controller="EventParticipants" asp-action="Delete"
+                                      asp-route-id="@participant.Id" method="post" class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-link text-danger fw-bold p-0 m-0 text-decoration-none">
+                                        KUSTUTA
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 class="text-primary mt-5 mb-3">Uue osavõtja lisamine</h4>
+
+            <form asp-controller="EventParticipants" asp-action="Create" method="post">
+                <input type="hidden" name="EventId" value="@Model.Event.Id"/>
+
+                <!-- Radio buttons -->
+                <div class="mb-3">
+                    <label class="form-label">Vali tüüp:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="ParticipantType" value="private"
+                               id="private" checked onclick="toggleFields()">
+                        <label class="form-check-label" for="private">Eraisik</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="ParticipantType" value="legal"
+                               id="legal"
+                               onclick="toggleFields()">
+                        <label class="form-check-label" for="legal">Ettevõte</label>
+                    </div>
+                </div>
+
+                <!-- Eraisik väljad -->
+                <div id="privateFields">
+                    <div class="mb-3">
+                        <label class="form-label">Eesnimi:</label>
+                        <input type="text" class="form-control" name="FirstName"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Perekonnanimi:</label>
+                        <input type="text" class="form-control" name="LastName"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Isikukood:</label>
+                        <input type="text" class="form-control" name="PersonalCode" placeholder="11 numbrit"/>
+                    </div>
+                </div>
+
+                <!-- Ettevõtte väljad -->
+                <div id="legalFields" style="display: none;">
+                    <div class="mb-3">
+                        <label class="form-label">Ettevõtte nimi:</label>
+                        <input type="text" class="form-control" name="CompanyName"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Registrikood:</label>
+                        <input type="text" class="form-control" name="RegistryCode"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Osalejate arv:</label>
+                        <input type="number" class="form-control" name="NumberOfAttendees"/>
+                    </div>
+                </div>
+
+                <!-- Makseviis ja Lisainfo -->
+                <div class="mb-3">
+                    <label class="form-label">Makseviis:</label>
+                    <select class="form-select" name="PaymentMethod">
+                        <option value="">Vali makseviis...</option>
+                        <option value="CreditCard">Krediitkaart</option>
+                        <option value="Invoice">Arve</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Lisainfo:</label>
+                    <textarea class="form-control" name="AdditionalInfo" rows="3"></textarea>
+                </div>
+
+                <!-- Nupud -->
+                <div class="d-flex">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">Tagasi</a>
+                    <button type="submit" class="btn btn-darker-primary">Lisa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleFields() {
+            var privateFields = document.getElementById('privateFields');
+            var legalFields = document.getElementById('legalFields');
+
+            if (document.getElementById('private').checked) {
+                privateFields.style.display = 'block';
+                legalFields.style.display = 'none';
+            } else {
+                privateFields.style.display = 'none';
+                legalFields.style.display = 'block';
+            }
+        }
+    </script>
 }
-    </tbody>
-</table>

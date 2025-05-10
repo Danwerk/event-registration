@@ -53,8 +53,8 @@
                                     </div>
                                     <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
                                     <div class="text-nowrap">
-                                        <a href="#" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
-                                        <a href="#" class="text-dark ms-2">
+                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
+                                        <a asp-controller="Events" asp-action="Delete" asp-route-id="@item.Id" class="text-dark ms-2">
                                             <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
                                         </a>
                                     </div>
@@ -87,13 +87,8 @@
                                     </div>
                                     <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
                                     <div class="text-nowrap">
-                                        @* <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" *@
-                                        @*    class="text-secondary fw-bold text-decoration-none"> *@
-                                        @*     OSAVÕTJAD *@
-                                        @* </a> *@
-
                                         <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD</a>
-                                        <a href="#" class="text-dark ms-2">
+                                        <a asp-controller="Events" asp-action="Delete" asp-route-id="@item.Id" class="text-dark ms-2">
                                             <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
                                         </a>
                                     </div>

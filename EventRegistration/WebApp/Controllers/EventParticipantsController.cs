@@ -2,27 +2,68 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain;
+using Microsoft.Build.Framework;
+using WebApp.Models;
 
 namespace WebApp.Controllers
 {
     public class EventParticipantsController : Controller
     {
-        private readonly AppUOW _uow;
+        private readonly IAppUOW _uow;
 
-        public EventParticipantsController(AppUOW uow)
+        public EventParticipantsController(IAppUOW uow)
         {
             _uow = uow;
         }
 
         // GET: EventParticipants
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid eventId)
         {
-            var vm = await _uow.EventParticipantRepository.AllAsync();
+            var eventEntity = await _uow.EventRepository.FindAsync(eventId);
+
+            if (eventEntity == null)
+            {
+                return NotFound();
+            }
+
+            var eventParticipants = await _uow.EventParticipantRepository.AllAsync(eventId);
+            
+            var participants = new List<ParticipantDisplayViewModel>();
+
+            foreach (var ep in eventParticipants)
+            {
+                if (ep.Participant is App.Domain.PrivatePerson privatePerson)
+                {
+                    participants.Add(new ParticipantDisplayViewModel
+                    {
+                        Id = privatePerson.Id,
+                        Name = $"{privatePerson.FirstName} {privatePerson.LastName}",
+                        Code = privatePerson.PersonalCode
+                    });
+                }
+                else if (ep.Participant is App.Domain.LegalPerson legalPerson)
+                {
+                    participants.Add(new ParticipantDisplayViewModel
+                    {
+                        Id = legalPerson.Id,
+                        Name = legalPerson.CompanyName,
+                        Code = legalPerson.RegistryCode
+                    });
+                }
+            }
+
+            var vm = new EventParticipantViewModel()
+            {
+                Event = eventEntity,
+                Participants = participants
+            };
+            
             return View(vm);
         }
 
@@ -56,18 +97,71 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,ParticipantId,Id")] EventParticipant eventParticipant)
+        public async Task<IActionResult> Create(EventParticipantCreateViewModel vm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                eventParticipant.Id = Guid.NewGuid();
-                _uow.EventParticipantRepository.Add(eventParticipant);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var vmIndex = await LoadEventParticipantViewModel(vm.EventId);
+                return View("Index", vmIndex);
             }
-            ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.EventId);
-            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.ParticipantId);
-            return View(eventParticipant);
+
+            if (vm.PaymentMethodId == Guid.Empty)
+            {
+                ModelState.AddModelError("", "Palun vali korrektne makseviis.");
+                var vmIndex = await LoadEventParticipantViewModel(vm.EventId);
+                return View("Index", vmIndex);
+            }
+
+            
+
+            if (vm.ParticipantType == "private")
+            {
+                var privatePerson = new PrivatePerson
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = vm.FirstName!,
+                    LastName = vm.LastName!,
+                    PersonalCode = vm.PersonalCode!,
+                    PaymentMethodId = vm.PaymentMethodId,
+                    AdditionalInfo = vm.AdditionalInfo ?? ""
+                };
+                _uow.ParticipantRepository.Add(privatePerson);
+                await _uow.SaveChangesAsync();
+
+                var eventParticipant = new EventParticipant
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = vm.EventId,
+                    ParticipantId = privatePerson.Id,
+                };
+                _uow.EventParticipantRepository.Add(eventParticipant);
+            }
+            else if (vm.ParticipantType == "legal")
+            {
+                var legalPerson = new LegalPerson
+                {
+                    Id = Guid.NewGuid(),
+                    CompanyName = vm.CompanyName!,
+                    RegistryCode = vm.RegistryCode!,
+                    NumberOfAttendees = vm.NumberOfAttendees ?? 1, // vaikimisi 1 kui mitte määratud
+                    PaymentMethodId = vm.PaymentMethodId,
+                    AdditionalInfo = vm.AdditionalInfo ?? ""
+                };
+
+                _uow.ParticipantRepository.Add(legalPerson);
+                await _uow.SaveChangesAsync();
+
+                var eventParticipant = new EventParticipant
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = vm.EventId,
+                    ParticipantId = legalPerson.Id
+                };
+                _uow.EventParticipantRepository.Add(eventParticipant);
+            }
+
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
         }
 
         // GET: EventParticipants/Edit/5
@@ -162,5 +256,46 @@ namespace WebApp.Controllers
         {
             return (_uow.EventParticipantRepository.AllAsync().Result?.Any(e=>e.Id == id)).GetValueOrDefault();
         }
+        
+        private async Task<EventParticipantViewModel> LoadEventParticipantViewModel(Guid eventId)
+        {
+            var eventEntity = await _uow.EventRepository.FindAsync(eventId);
+            if (eventEntity == null)
+            {
+                throw new Exception("Event not found");
+            }
+
+            var eventParticipants = await _uow.EventParticipantRepository.AllAsync(eventId);
+            var participants = new List<ParticipantDisplayViewModel>();
+
+            foreach (var ep in eventParticipants)
+            {
+                if (ep.Participant is PrivatePerson privatePerson)
+                {
+                    participants.Add(new ParticipantDisplayViewModel
+                    {
+                        Id = privatePerson.Id,
+                        Name = $"{privatePerson.FirstName} {privatePerson.LastName}",
+                        Code = privatePerson.PersonalCode
+                    });
+                }
+                else if (ep.Participant is LegalPerson legalPerson)
+                {
+                    participants.Add(new ParticipantDisplayViewModel
+                    {
+                        Id = legalPerson.Id,
+                        Name = legalPerson.CompanyName,
+                        Code = legalPerson.RegistryCode
+                    });
+                }
+            }
+
+            return new EventParticipantViewModel
+            {
+                Event = eventEntity,
+                Participants = participants
+            };
+        }
+
     }
 }

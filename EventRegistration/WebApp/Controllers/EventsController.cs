@@ -62,7 +62,7 @@ namespace WebApp.Controllers
                 @event.Id = Guid.NewGuid();
                 _uow.EventRepository.Add(@event);
                 await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Home");
             }
             return View(@event);
         }
@@ -132,13 +132,18 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var @event = await _uow.EventRepository.FindAsync(id);
-            if (@event != null)
+            
+            if (@event == null)
             {
-                _uow.EventRepository.Remove(@event);
+                return NotFound();
             }
 
+            var eventParticipants = (await _uow.EventParticipantRepository.AllAsync(id)).ToList();
+            eventParticipants.ForEach(p => _uow.EventParticipantRepository.Remove(p));
+            
+            _uow.EventRepository.Remove(@event);
             await _uow.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         private bool EventExists(Guid id)

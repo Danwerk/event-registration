@@ -18,6 +18,15 @@ public class EventParticipantRepository : EFBaseRepository<EventParticipant, App
             .Include(e=>e.Participant).OrderBy(e => e.EventId).ToListAsync();
     }
     
+    public virtual async Task<IEnumerable<EventParticipant>> AllAsync(Guid eventId)
+    {
+        return await RepositoryDbSet
+            .Include(e => e.Event)
+            .Include(e => e.Participant)
+            .Where(e => e.Event!.Id == eventId).OrderBy(e => e.EventId)
+            .ToListAsync();
+    }
+    
     public override async Task<EventParticipant?> FindAsync(Guid id)
     {
         return await RepositoryDbSet
