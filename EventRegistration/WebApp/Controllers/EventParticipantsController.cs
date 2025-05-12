@@ -127,6 +127,11 @@ namespace WebApp.Controllers
 
             if (vm.ParticipantType == "private")
             {
+                if (string.IsNullOrWhiteSpace(vm.PersonalCode) || !System.Text.RegularExpressions.Regex.IsMatch(vm.PersonalCode, @"^\d{11}$"))
+                {
+                    ModelState.AddModelError("PersonalCode", "Isikukood peab olema 11 numbrit.");
+                }
+                
                 var privatePerson = new PrivatePerson
                 {
                     Id = Guid.NewGuid(),

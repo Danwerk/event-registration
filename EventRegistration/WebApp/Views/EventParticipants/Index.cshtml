@@ -115,7 +115,13 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Isikukood:</label>
-                        <input type="text" class="form-control" name="PersonalCode" placeholder="11 numbrit"/>
+                        <input type="text" class="form-control" name="PersonalCode" maxlength="11" pattern="\d{11}"/>
+                        @if (ViewData.ModelState["PersonalCode"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger">
+                                @ViewData.ModelState["PersonalCode"]!.Errors[0].ErrorMessage
+                            </div>
+                        }
                     </div>
                 </div>
 
@@ -185,6 +191,8 @@
         window.onload = function () {
             toggleFields();
         };
+
+        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     </script>
 
 }
