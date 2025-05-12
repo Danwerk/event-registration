@@ -1,3 +1,10 @@
+TODOs
+- Andmebaasi diagramm
+- Testimine xUnit (Unit Test EventParticipantRepository või ParticipantRepository peale. Integration Test API või Controllerite vastu (nt xUnit + TestServer).)
+- dokumentatsioon, 
+- ilmselt hea oleks dockeri konteiner teha
+- 
+
 # Running and configuration
 ### If using docker
 Copy in root directory appsettings.json and modify "DefaultConnection" connection string with your hosting db settings.

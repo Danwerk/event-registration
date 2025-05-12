@@ -8,4 +8,5 @@ public interface IAppUOW : IBaseUOW
     IEventRepository EventRepository { get; }
     IEventParticipantRepository EventParticipantRepository { get; }
     IParticipantRepository ParticipantRepository { get; }
+    IPaymentMethodRepository PaymentMethodRepository { get; }
 }

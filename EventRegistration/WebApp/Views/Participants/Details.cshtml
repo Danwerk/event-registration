@@ -1,30 +1,141 @@
 @model App.Domain.Participant
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Osavõtja info";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Participant</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentMethod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentMethod!.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdditionalInfo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdditionalInfo)
-        </dd>
-    </dl>
+<div class="container my-2">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row h-100" style="min-height: 100px;">
+                <!-- Vasak pool -->
+                <div class="col-auto d-flex align-items-center bg-darker-primary text-white px-3">
+                    <h4 class="mb-0">Osavõtja info</h4>
+                </div>
+
+                <!-- Parem pool-->
+                <div class="col p-0">
+                    <img src="~/img/libled.jpg" class="img-fluid" alt="Libled"
+                         style="height: 100px; width: 100%; object-fit: cover;"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+
+
+<div class="container my-5">
+     <div class="row justify-content-center">
+         <div class="col-md-7">
+             <h4 class="text-darker-primary mb-4">Osavõtja info</h4>
+
+             <!-- Vorm -->
+             @if (Model is App.Domain.PrivatePerson privatePerson)
+             {
+                 <form asp-action="EditPrivatePerson" asp-controller="Participants" method="post">
+                     <input type="hidden" name="Id" value="@privatePerson.Id" />
+                     <input type="hidden" name="EventId" value="@ViewBag.EventId" />
+
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Eesnimi:</label>
+                         <div class="col-sm-9">
+                             <input name="FirstName" class="form-control" value="@privatePerson.FirstName" />
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Perekonnanimi:</label>
+                         <div class="col-sm-9">
+                             <input name="LastName" class="form-control" value="@privatePerson.LastName" />
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Isikukood:</label>
+                         <div class="col-sm-9">
+                             <input name="PersonalCode" class="form-control" value="@privatePerson.PersonalCode" />
+                         </div>
+                     </div>
+
+                     <!-- PaymentMethod ja AdditionalInfo ka! -->
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Makseviis:</label>
+                         <div class="col-sm-9">
+                             <select name="PaymentMethodId" class="form-select">
+                                 @foreach (var item in (List<SelectListItem>)ViewBag.PaymentMethods)
+                                 {
+                                     <option value="@item.Value" selected="@(item.Value == privatePerson.PaymentMethodId.ToString() ? "selected" : null)">@item.Text</option>
+                                 }
+                             </select>
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Lisainfo:</label>
+                         <div class="col-sm-9">
+                             <textarea name="AdditionalInfo" class="form-control">@privatePerson.AdditionalInfo</textarea>
+                         </div>
+                     </div>
+
+                     <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                 </form>
+             }
+             else if (Model is App.Domain.LegalPerson legalPerson)
+             {
+                 <form asp-action="EditLegalPerson" asp-controller="Participants" method="post">
+                     <input type="hidden" name="Id" value="@legalPerson.Id" />
+                     <input type="hidden" name="EventId" value="@ViewBag.EventId" />
+
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Ettevõtte nimi:</label>
+                         <div class="col-sm-9">
+                             <input name="CompanyName" class="form-control" value="@legalPerson.CompanyName" />
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Registrikood:</label>
+                         <div class="col-sm-9">
+                             <input name="RegistryCode" class="form-control" value="@legalPerson.RegistryCode" />
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Osalejate arv:</label>
+                         <div class="col-sm-9">
+                             <input name="NumberOfAttendees" class="form-control" type="number" value="@legalPerson.NumberOfAttendees" />
+                         </div>
+                     </div>
+
+                     <!-- PaymentMethod ja AdditionalInfo -->
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Makseviis:</label>
+                         <div class="col-sm-9">
+                             <select name="PaymentMethodId" class="form-select">
+                                 @foreach (var item in (List<SelectListItem>)ViewBag.PaymentMethods)
+                                 {
+                                     <option value="@item.Value" selected="@(item.Value == legalPerson.PaymentMethodId.ToString() ? "selected" : null)">@item.Text</option>
+                                 }
+                             </select>
+                         </div>
+                     </div>
+
+                     <div class="mb-3 row">
+                         <label class="col-sm-3 col-form-label">Lisainfo:</label>
+                         <div class="col-sm-9">
+                             <textarea name="AdditionalInfo" class="form-control">@legalPerson.AdditionalInfo</textarea>
+                         </div>
+                     </div>
+
+                     <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                 </form>
+             }
+
+
+         </div>
+     </div>
 </div>

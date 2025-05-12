@@ -57,6 +57,15 @@ namespace WebApp.Controllers
                     });
                 }
             }
+            
+            var paymentMethods = await _uow.PaymentMethodRepository.AllAsync();
+            ViewBag.PaymentMethods = paymentMethods
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToList();
 
             var vm = new EventParticipantViewModel()
             {
@@ -289,7 +298,15 @@ namespace WebApp.Controllers
                     });
                 }
             }
-
+            var paymentMethods = await _uow.PaymentMethodRepository.AllAsync();
+            ViewBag.PaymentMethods = paymentMethods
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToList();
+            
             return new EventParticipantViewModel
             {
                 Event = eventEntity,

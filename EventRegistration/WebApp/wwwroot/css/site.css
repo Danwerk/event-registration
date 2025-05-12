@@ -39,6 +39,9 @@ header {
   background-color: #27527d;
   color: white;
 }
+.text-darker-primary {
+  color: #27527d;
+}
 
 .btn-darker-primary:hover {
   background-color: #3a6a99; 

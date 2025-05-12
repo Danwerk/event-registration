@@ -24,59 +24,69 @@
     </div>
 </div>
 
-<div class="container my-5">
+<div class="container my-3">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <h2 class="text-dark mb-4">Ürituse info</h2>
+            <h4 class="text-darker-primary">Osavõtjad</h4>
+            
+        </div>
+    </div>
+</div>
 
+<div class="container my-2">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
             <div class="mb-4">
                 <dl class="row">
-                    <dt class="col-sm-3">Ürituse nimi:</dt>
-                    <dd class="col-sm-9">@Model.Event.Name</dd>
+                    <dt class="col-sm-3 fw-normal">Ürituse nimi:</dt>
+                    <dd class="col-sm-9 text-secondary">@Model.Event.Name</dd>
 
-                    <dt class="col-sm-3">Toimumisaeg:</dt>
-                    <dd class="col-sm-9">@Model.Event.DateTime.ToString("dd.MM.yyyy")</dd>
+                    <dt class="col-sm-3 fw-normal">Toimumisaeg:</dt>
+                    <dd class="col-sm-9 text-secondary">@Model.Event.DateTime.ToString("dd.MM.yyyy")</dd>
 
-                    <dt class="col-sm-3">Koht:</dt>
-                    <dd class="col-sm-9">@Model.Event.Location</dd>
+                    <dt class="col-sm-3 fw-normal">Koht:</dt>
+                    <dd class="col-sm-9 text-secondary">@Model.Event.Location</dd>
+
+                    <dt class="col-sm-3 fw-normal">Osavõtjad:</dt>
+                    <dd class="col-sm-9 text-secondary">
+                        <div class="mb-4">
+                            @for (var i = 0; i < Model.Participants.Count; i++)
+                            {
+                                var participant = Model.Participants[i];
+                                <div class="row align-items-center py-2 border-bottom">
+                                    <div class="col-sm-4 text-secondary">
+                                        @($"{i + 1}. {participant.Name}")
+                                    </div>
+                                    <div class="col-sm-4 text-secondary">
+                                        @participant.Code
+                                    </div>
+                                    <div class="col-sm-4 text-end">
+                                        <div class="d-inline-flex align-items-center">
+                                            <a asp-controller="Participants" asp-action="Details" asp-route-id="@participant.Id" asp-route-eventId="@Model.Event.Id"
+                                               class="text-secondary fw-bold me-3 text-decoration-none">
+                                                VAATA
+                                            </a>
+
+                                            <form asp-controller="EventParticipants" asp-action="Delete"
+                                                  asp-route-id="@participant.Id" method="post" class="d-inline m-0 p-0">
+                                                <button type="submit"
+                                                        class="btn btn-link text-danger fw-bold p-0 m-0 text-decoration-none align-middle">
+                                                    KUSTUTA
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        
+                    </dd>
+                    
                 </dl>
             </div>
-
-
-            <h4>Osavõtjad:</h4>
-            <div class="table-responsive">
-                <table class="table table-borderless align-middle">
-                    <tbody>
-                    @for (var i = 0; i < Model.Participants.Count; i++)
-                    {
-                        var participant = Model.Participants[i];
-                        <tr>
-                            <td class="text-start" style="width: 40%;">
-                                @($"{i + 1}. {participant.Name}")
-                            </td>
-                            <td class="text-center" style="width: 30%;">
-                                @participant.Code
-                            </td>
-                            <td class="text-end" style="width: 30%;">
-                                <a asp-controller="Participants" asp-action="Details" asp-route-id="@participant.Id"
-                                   class="text-secondary fw-bold me-3 text-decoration-none">
-                                    VAATA
-                                </a>
-                                <form asp-controller="EventParticipants" asp-action="Delete"
-                                      asp-route-id="@participant.Id" method="post" class="d-inline">
-                                    <button type="submit"
-                                            class="btn btn-link text-danger fw-bold p-0 m-0 text-decoration-none">
-                                        KUSTUTA
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-
-            <h4 class="text-primary mt-5 mb-3">Uue osavõtja lisamine</h4>
+            
+            <h4 class="text-darker-primary mt-2 mb-3">Osavõtjate lisamine</h4>
 
             <form asp-controller="EventParticipants" asp-action="Create" method="post">
                 <input type="hidden" name="EventId" value="@Model.Event.Id"/>
@@ -131,13 +141,16 @@
 
                 <!-- Makseviis ja Lisainfo -->
                 <div class="mb-3">
-                    <label class="form-label">Makseviis:</label>
-                    <select class="form-select" name="PaymentMethod">
+                    <label class="form-label">Maksmisviis:</label>
+                    <select class="form-select" name="PaymentMethodId">
                         <option value="">Vali makseviis...</option>
-                        <option value="CreditCard">Krediitkaart</option>
-                        <option value="Invoice">Arve</option>
+                        @foreach (var method in (List<SelectListItem>)ViewBag.PaymentMethods)
+                        {
+                            <option value="@method.Value">@method.Text</option>
+                        }
                     </select>
                 </div>
+
 
                 <div class="mb-4">
                     <label class="form-label">Lisainfo:</label>
