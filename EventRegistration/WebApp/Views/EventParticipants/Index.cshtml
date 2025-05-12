@@ -66,14 +66,10 @@
                                                class="text-secondary fw-bold me-3 text-decoration-none">
                                                 VAATA
                                             </a>
-
-                                            <form asp-controller="EventParticipants" asp-action="Delete"
-                                                  asp-route-id="@participant.Id" method="post" class="d-inline m-0 p-0">
-                                                <button type="submit"
-                                                        class="btn btn-link text-danger fw-bold p-0 m-0 text-decoration-none align-middle">
-                                                    KUSTUTA
-                                                </button>
-                                            </form>
+                                            <a asp-controller="EventParticipants" asp-action="Delete" asp-route-id="@participant.EventParticipantId"
+                                               class="btn btn-link text-danger fw-bold p-0 m-0 text-decoration-none align-middle">
+                                                KUSTUTA
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +150,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Lisainfo:</label>
-                    <textarea class="form-control" name="AdditionalInfo" rows="3"></textarea>
+                    <textarea class="form-control" id="additionalInfo" name="AdditionalInfo" rows="3"></textarea>
                 </div>
 
                 <!-- Nupud -->
@@ -172,14 +168,23 @@
         function toggleFields() {
             var privateFields = document.getElementById('privateFields');
             var legalFields = document.getElementById('legalFields');
+            var additionalInfo = document.getElementById('additionalInfo');
 
             if (document.getElementById('private').checked) {
                 privateFields.style.display = 'block';
                 legalFields.style.display = 'none';
+                additionalInfo.setAttribute("maxlength", "1500");
             } else {
                 privateFields.style.display = 'none';
                 legalFields.style.display = 'block';
+                additionalInfo.setAttribute("maxlength", "5000");
             }
         }
+
+        // Kui leht laeb, seadista algne maxlength õigesti
+        window.onload = function () {
+            toggleFields();
+        };
     </script>
+
 }

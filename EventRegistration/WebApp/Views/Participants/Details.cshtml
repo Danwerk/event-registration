@@ -80,7 +80,10 @@
                          </div>
                      </div>
 
-                     <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                     <div class="d-flex">
+                         <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">Tagasi</a>
+                         <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                     </div>
                  </form>
              }
              else if (Model is App.Domain.LegalPerson legalPerson)
@@ -130,8 +133,11 @@
                              <textarea name="AdditionalInfo" class="form-control">@legalPerson.AdditionalInfo</textarea>
                          </div>
                      </div>
-
-                     <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                     <!-- Nupud -->
+                     <div class="d-flex">
+                         <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">Tagasi</a>
+                         <button type="submit" class="btn btn-darker-primary">Salvesta</button>
+                     </div>
                  </form>
              }
 

@@ -42,6 +42,7 @@ namespace WebApp.Controllers
                 {
                     participants.Add(new ParticipantDisplayViewModel
                     {
+                        EventParticipantId = ep.Id,
                         Id = privatePerson.Id,
                         Name = $"{privatePerson.FirstName} {privatePerson.LastName}",
                         Code = privatePerson.PersonalCode
@@ -51,6 +52,7 @@ namespace WebApp.Controllers
                 {
                     participants.Add(new ParticipantDisplayViewModel
                     {
+                        EventParticipantId = ep.Id,
                         Id = legalPerson.Id,
                         Name = legalPerson.CompanyName,
                         Code = legalPerson.RegistryCode
@@ -252,13 +254,18 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var eventParticipant = await _uow.EventParticipantRepository.FindAsync(id);
-            if (eventParticipant != null)
+            if (eventParticipant == null)
             {
-                _uow.EventParticipantRepository.Remove(eventParticipant);
+                return NotFound();
             }
 
+            var eventId = eventParticipant.EventId;
+
+            _uow.EventParticipantRepository.Remove(eventParticipant);
             await _uow.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            
+            return RedirectToAction(nameof(Index), new { eventId = eventId });
         }
 
         private bool EventParticipantExists(Guid id)
