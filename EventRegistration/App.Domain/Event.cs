@@ -12,7 +12,7 @@ public class Event : DomainEntityId
     
     public string Location { get; set; } = default!;
     
-    [MaxLength(4096)]
+    [MaxLength(1000)]
     public string AdditionalInfo { get; set; } = default!;
     
     public ICollection<EventParticipant>? EventParticipants { get; set; }

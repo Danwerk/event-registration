@@ -57,6 +57,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,DateTime,Location,AdditionalInfo,Id")] Event @event)
         {
+            if (@event.DateTime <= DateTime.Now)
+            {
+                ModelState.AddModelError("DateTime", "Toimumisaeg peab olema tulevikus.");
+            }
+            
             if (ModelState.IsValid)
             {
                 @event.Id = Guid.NewGuid();
@@ -132,6 +137,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var @event = await _uow.EventRepository.FindAsync(id);
+          
             
             if (@event == null)
             {

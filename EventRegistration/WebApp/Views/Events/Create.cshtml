@@ -42,6 +42,7 @@
                     <label asp-for="DateTime" class="col-sm-3 col-form-label">Toimumisaeg:</label>
                     <div class="col-sm-9">
                         <input asp-for="DateTime" class="form-control" placeholder="pp.kk.aaaa hh:mm" />
+                        <span asp-validation-for="DateTime" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -55,7 +56,7 @@
                 <div class="mb-4 row">
                     <label asp-for="AdditionalInfo" class="col-sm-3 col-form-label">Lisainfo:</label>
                     <div class="col-sm-9">
-                        <textarea asp-for="AdditionalInfo" class="form-control" rows="3"></textarea>
+                        <textarea asp-for="AdditionalInfo" class="form-control" rows="3" maxlength="1000"></textarea>
                     </div>
                 </div>
 
