@@ -110,4 +110,35 @@ public class ParticipantRepositoryTests
 
         Assert.Null(deleted);
     }
+    
+    [Fact]
+    public async Task Update_ShouldModifyParticipant()
+    {
+        var participant = new PrivatePerson
+        {
+            Id = Guid.NewGuid(),
+            FirstName = "OldFirst",
+            LastName = "OldLast",
+            PersonalCode = "12345678901",
+            PaymentMethodId = Guid.NewGuid(),
+            AdditionalInfo = "Old info"
+        };
+
+        _context.Participants.Add(participant);
+        await _context.SaveChangesAsync();
+
+        participant.FirstName = "NewFirst";
+        participant.LastName = "NewLast";
+        participant.AdditionalInfo = "Updated info";
+
+        _repository.Update(participant);
+        await _context.SaveChangesAsync();
+
+        var updated = await _repository.FindAsync(participant.Id);
+
+        Assert.NotNull(updated);
+        Assert.Equal("NewFirst", ((PrivatePerson)updated!).FirstName);
+        Assert.Equal("NewLast", ((PrivatePerson)updated!).LastName);
+        Assert.Equal("Updated info", updated.AdditionalInfo);
+    }
 }
