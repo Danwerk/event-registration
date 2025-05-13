@@ -3,6 +3,13 @@ TODOs
 - Testimine xUnit (Unit Test EventParticipantRepository või ParticipantRepository peale. Integration Test API või Controllerite vastu (nt xUnit + TestServer).)
 - dokumentatsioon, 
 
+## testing
+packages needed
+.net.test.sdk
+xunit
+moq
+inmemory
+
 # Running and configuration
 ### If using docker
 Copy in root directory appsettings.json and modify "DefaultConnection" connection string with your hosting db settings.
