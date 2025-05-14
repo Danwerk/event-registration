@@ -40,29 +40,49 @@
                     </div>
 
                     <div class="bg-white p-3 border flex-grow-1 d-flex flex-column justify-content-between">
-                        <ol class="list-unstyled">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Ürituse nimi</th>
+                                <th>Kuupäev</th>
+                                <th>Asukoht</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             @{
                                 i = 1;
                             }
                             @foreach (var item in Model.FutureEvents)
                             {
-                                <li class="d-flex justify-content-between align-items-center border-bottom py-2">
-                                    <div class="d-flex">
-                                        <div class="me-2">@($"{i}.")</div>
-                                        <div>@item.Name</div>
-                                    </div>
-                                    <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
-                                    <div class="text-nowrap mx-2">@item.Location</div>
-                                    <div class="text-nowrap">
-                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD(@item.EventParticipants!.Count)</a>
-                                        <a asp-controller="Events" asp-action="Delete" asp-route-id="@item.Id" class="text-dark ms-2">
-                                            <img src="~/img/remove.svg" alt="Remove" style="width: 16px; height: 16px;"/>
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.DateTime.ToString("dd.MM.yyyy")</td>
+                                    <td>@item.Location</td>
+                                    <td>
+                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">
+                                            OSAVÕTJAD(@item.EventParticipants!.Count)
                                         </a>
-                                    </div>
-                                </li>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <a asp-controller="Events" asp-action="Edit" asp-route-id="@item.Id" class="text-dark me-2">
+                                                <img src="~/img/edit.svg" alt="Muuda" style="width: 16px; height: 16px;" />
+                                            </a>
+                                            <a asp-controller="Events" asp-action="Delete" asp-route-id="@item.Id" class="text-dark">
+                                                <img src="~/img/remove.svg" alt="Kustuta" style="width: 16px; height: 16px;" />
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 i++;
                             }
-                        </ol>
+                            </tbody>
+                        </table>
+
                         <div class="mt-3 text-start">
                             <a asp-controller="Events" asp-action="Create" class="text-dark text-decoration-none">LISA ÜRITUS</a>
                         </div>
@@ -75,27 +95,38 @@
                     </div>
 
                     <div class="bg-white p-3 border flex-grow-1 d-flex flex-column justify-content-between">
-                        <ol class="list-unstyled">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Ürituse nimi</th>
+                                <th>Kuupäev</th>
+                                <th>Asukoht</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             @{
                                 i = 1;
                             }
                             @foreach (var item in Model.PastEvents)
                             {
-                                <li class="d-flex justify-content-between align-items-center border-bottom py-2">
-                                    <div class="d-flex">
-                                        <div class="me-2">@($"{i}.")</div>
-                                        <div>@item.Name</div>
-                                    </div>
-                                    <div class="text-nowrap mx-2">@item.DateTime.ToString("dd.MM.yyyy")</div>
-                                    <div class="text-nowrap mx-2">@item.Location</div>
-                                    <div class="text-nowrap">
-                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">OSAVÕTJAD(@item.EventParticipants!.Count)</a>
-                                       
-                                    </div>
-                                </li>
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.DateTime.ToString("dd.MM.yyyy")</td>
+                                    <td>@item.Location</td>
+                                    <td>
+                                        <a asp-controller="EventParticipants" asp-action="Index" asp-route-eventId="@item.Id" class="text-secondary fw-bold text-decoration-none">
+                                            OSAVÕTJAD(@item.EventParticipants!.Count)
+                                        </a>
+                                    </td>
+                                </tr>
                                 i++;
                             }
-                        </ol>
+                            </tbody>
+                        </table>
+
                         <div class="mt-3 text-start">
                             @* <a asp-controller="Events" asp-action="Create" class="text-dark text-decoration-none">LISA ÜRITUS</a> *@
                         </div>

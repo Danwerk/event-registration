@@ -1,9 +1,11 @@
 TODOs
+
 - Andmebaasi diagramm
 - Testimine xUnit (Unit Test EventParticipantRepository või ParticipantRepository peale. Integration Test API või Controllerite vastu (nt xUnit + TestServer).)
 - dokumentatsioon, 
 
 ## testing
+todo: inmemory db and 
 packages needed
 .net.test.sdk
 xunit
@@ -50,6 +52,7 @@ cd WebApp
 ```
 dotnet aspnet-codegenerator controller -name EventsController       -actions -m  Event    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 dotnet aspnet-codegenerator controller -name ParticipantsController       -actions -m  Participant    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
+dotnet aspnet-codegenerator controller -name PaymentMethodsController       -actions -m  PaymentMethod    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 ```
 
 

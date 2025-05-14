@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -68,6 +64,16 @@ namespace WebApp.Controllers
                     Text = p.Name
                 })
                 .ToList();
+            var allParticipants = await _uow.ParticipantRepository.AllAsync();
+            ViewBag.AllParticipants = allParticipants.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = p is PrivatePerson privateP
+                    ? $"{privateP.FirstName} {privateP.LastName} ({privateP.PersonalCode})"
+                    : p is LegalPerson legalP
+                        ? $"{legalP.CompanyName} ({legalP.RegistryCode})"
+                        : "Tundmatu"
+            }).ToList();
 
             var vm = new EventParticipantViewModel()
             {
@@ -107,7 +113,6 @@ namespace WebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EventParticipantCreateViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -116,7 +121,7 @@ namespace WebApp.Controllers
                 return View("Index", vmIndex);
             }
 
-            if (vm.PaymentMethodId == Guid.Empty)
+            if (vm.PaymentMethodId == null || vm.PaymentMethodId == Guid.Empty)
             {
                 ModelState.AddModelError("", "Palun vali korrektne makseviis.");
                 var vmIndex = await LoadEventParticipantViewModel(vm.EventId);
@@ -138,7 +143,7 @@ namespace WebApp.Controllers
                     FirstName = vm.FirstName!,
                     LastName = vm.LastName!,
                     PersonalCode = vm.PersonalCode!,
-                    PaymentMethodId = vm.PaymentMethodId,
+                    PaymentMethodId = vm.PaymentMethodId.Value,
                     AdditionalInfo = vm.AdditionalInfo ?? ""
                 };
                 _uow.ParticipantRepository.Add(privatePerson);
@@ -160,7 +165,7 @@ namespace WebApp.Controllers
                     CompanyName = vm.CompanyName!,
                     RegistryCode = vm.RegistryCode!,
                     NumberOfAttendees = vm.NumberOfAttendees ?? 1, // vaikimisi 1 kui mitte määratud
-                    PaymentMethodId = vm.PaymentMethodId,
+                    PaymentMethodId = vm.PaymentMethodId.Value,
                     AdditionalInfo = vm.AdditionalInfo ?? ""
                 };
 
@@ -179,6 +184,115 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> CreatePrivate(EventParticipantCreatePrivateViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                var vmIndex = await LoadEventParticipantViewModel(vm.EventId);
+                return View("Index", vmIndex);
+            }
+
+            var privatePerson = new PrivatePerson
+            {
+                Id = Guid.NewGuid(),
+                FirstName = vm.FirstName!,
+                LastName = vm.LastName!,
+                PersonalCode = vm.PersonalCode!,
+                PaymentMethodId = vm.PaymentMethodId!.Value,
+                AdditionalInfo = vm.AdditionalInfo ?? ""
+            };
+            _uow.ParticipantRepository.Add(privatePerson);
+            await _uow.SaveChangesAsync();
+
+            var eventParticipant = new EventParticipant
+            {
+                Id = Guid.NewGuid(),
+                EventId = vm.EventId,
+                ParticipantId = privatePerson.Id
+            };
+            _uow.EventParticipantRepository.Add(eventParticipant);
+
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateLegal(EventParticipantCreateLegalViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                var vmIndex = await LoadEventParticipantViewModel(vm.EventId);
+                return View("Index", vmIndex);
+            }
+
+            var legalPerson = new LegalPerson
+            {
+                Id = Guid.NewGuid(),
+                CompanyName = vm.CompanyName!,
+                RegistryCode = vm.RegistryCode!,
+                NumberOfAttendees = vm.NumberOfAttendees ?? 1,
+                PaymentMethodId = vm.PaymentMethodId!.Value,
+                AdditionalInfo = vm.AdditionalInfo ?? ""
+            };
+            _uow.ParticipantRepository.Add(legalPerson);
+            await _uow.SaveChangesAsync();
+
+            var eventParticipant = new EventParticipant
+            {
+                Id = Guid.NewGuid(),
+                EventId = vm.EventId,
+                ParticipantId = legalPerson.Id
+            };
+            _uow.EventParticipantRepository.Add(eventParticipant);
+
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddExistingParticipant(Guid eventId, Guid participantId)
+        {
+            if (eventId == Guid.Empty || participantId == Guid.Empty)
+            {
+                return BadRequest("EventId ja ParticipantId peavad olema määratud.");
+            }
+
+            var eventEntity = await _uow.EventRepository.FindAsync(eventId);
+            if (eventEntity == null)
+            {
+                return NotFound("Üritust ei leitud.");
+            }
+
+            var participantEntity = await _uow.ParticipantRepository.FindAsync(participantId);
+            if (participantEntity == null)
+            {
+                return NotFound("Osavõtjat ei leitud.");
+            }
+
+            // Kontrollime, kas see osaleja on juba sellel üritusel
+            var existing = await _uow.EventParticipantRepository.AllAsync(eventId);
+            if (existing.Any(ep => ep.ParticipantId == participantId))
+            {
+                ModelState.AddModelError("", "See osaleja on juba sellel üritusel olemas.");
+                var vmIndex = await LoadEventParticipantViewModel(eventId);
+                return View("Index", vmIndex);
+            }
+
+            var eventParticipant = new EventParticipant
+            {
+                Id = Guid.NewGuid(),
+                EventId = eventId,
+                ParticipantId = participantId
+            };
+            _uow.EventParticipantRepository.Add(eventParticipant);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { eventId = eventId });
+        }
+
+
 
         // GET: EventParticipants/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -202,7 +316,6 @@ namespace WebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("EventId,ParticipantId,Id")] EventParticipant eventParticipant)
         {
             if (id != eventParticipant.Id)
@@ -255,7 +368,6 @@ namespace WebApp.Controllers
 
         // POST: EventParticipants/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var eventParticipant = await _uow.EventParticipantRepository.FindAsync(id);

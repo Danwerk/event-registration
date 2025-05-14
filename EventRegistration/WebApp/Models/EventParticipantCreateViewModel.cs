@@ -17,7 +17,7 @@
         public int? NumberOfAttendees { get; set; } // mitu osalejat ettevõttel
 
         // Ühine
-        public Guid PaymentMethodId { get; set; }
+        public Guid? PaymentMethodId { get; set; }
         public string? AdditionalInfo { get; set; }
     }
 }

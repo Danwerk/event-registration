@@ -99,3 +99,5 @@ static void SetupAppData(IApplicationBuilder app, IWebHostEnvironment environmen
         AppDataInit.SeedData(context);
     }
 }
+
+public partial class Program { }

@@ -54,6 +54,7 @@ namespace WebApp.Controllers
                     Text = pm.Name
                 }).ToList();
             ViewBag.EventId = eventId;
+            
 
             return View(participant);
         }

@@ -35,7 +35,7 @@ namespace WebApp.Controllers
             }
 
             var @event = await _uow.EventRepository.FindAsync(id.Value);
-                
+
             if (@event == null)
             {
                 return NotFound();
@@ -54,23 +54,32 @@ namespace WebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,DateTime,Location,AdditionalInfo,Id")] Event @event)
         {
             if (@event.DateTime <= DateTime.Now)
             {
                 ModelState.AddModelError("DateTime", "Toimumisaeg peab olema tulevikus.");
             }
-            
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                @event.Id = Guid.NewGuid();
-                _uow.EventRepository.Add(@event);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), "Home");
+                return View(@event);
             }
-            return View(@event);
+
+            @event.Id = Guid.NewGuid();
+            _uow.EventRepository.Add(@event);
+            await _uow.SaveChangesAsync();
+
+            if (Request.Headers["Accept"] == "application/json")
+            {
+                // Kui JSON request, siis tagasta loodud objekt
+                return CreatedAtAction(nameof(Edit), new { id = @event.Id }, @event);
+            }
+
+            // Kui tavaline vormipäring, siis redirect
+            return RedirectToAction(nameof(Index), "Home");
         }
+
 
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -85,6 +94,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+
             return View(@event);
         }
 
@@ -92,7 +102,6 @@ namespace WebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Name,DateTime,Location,AdditionalInfo,Id")] Event @event)
         {
             if (id != @event.Id)
@@ -100,17 +109,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    _uow.EventRepository.Update(@event);
-                    await _uow.SaveChangesAsync();
-                
-                    return RedirectToAction(nameof(Index));
-                }
-                return RedirectToAction(nameof(Index));
+                _uow.EventRepository.Update(@event);
+                await _uow.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index), "Home");
+
             }
+
             return View(@event);
         }
 
@@ -133,12 +141,11 @@ namespace WebApp.Controllers
 
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var @event = await _uow.EventRepository.FindAsync(id);
-          
-            
+
+
             if (@event == null)
             {
                 return NotFound();
@@ -146,7 +153,7 @@ namespace WebApp.Controllers
 
             var eventParticipants = (await _uow.EventParticipantRepository.AllAsync(id)).ToList();
             eventParticipants.ForEach(p => _uow.EventParticipantRepository.Remove(p));
-            
+
             _uow.EventRepository.Remove(@event);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index), "Home");
