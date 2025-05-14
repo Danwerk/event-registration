@@ -6,7 +6,7 @@
 **/.idea/shelf/*
 **/.idea/dictionaries
 **/.idea/httpRequests/
-**/WebApp/appsettings.json
+# **/WebApp/appsettings.json
 # Sensitive or high-churn files
 **/.idea/**/dataSources/
 **/.idea/**/dataSources.ids

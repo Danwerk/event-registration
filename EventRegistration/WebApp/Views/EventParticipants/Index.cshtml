@@ -38,7 +38,7 @@
         <div class="col-md-7">
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="alert alert-danger">
+                <div class="alert alert-danger alert-dismissible fade show">
                     @foreach (var modelError in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                     {
                         <div>@modelError.ErrorMessage</div>

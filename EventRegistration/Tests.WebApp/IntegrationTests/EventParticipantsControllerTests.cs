@@ -81,6 +81,7 @@ namespace Tests.WebApp.IntegrationTests
         public async Task Post_CreateParticipant_MissingPaymentMethod_ReturnsViewWithError()
         {
             var eventId = await CreateTestEventAsync();
+            await CreateTestPaymentMethodAsync(); // <-- Lisa makseviis, et View ei crashiks
 
             var formData = new List<KeyValuePair<string, string>>
             {
@@ -98,6 +99,7 @@ namespace Tests.WebApp.IntegrationTests
             var responseBody = await response.Content.ReadAsStringAsync();
             responseBody.Should().Contain("Palun vali korrektne makseviis.");
         }
+
 
         private async Task<Guid> CreateTestEventAsync()
         {

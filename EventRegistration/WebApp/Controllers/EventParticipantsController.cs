@@ -29,7 +29,7 @@ namespace WebApp.Controllers
             }
 
             var eventParticipants = await _uow.EventParticipantRepository.AllAsync(eventId);
-            
+
             var participants = new List<ParticipantDisplayViewModel>();
 
             foreach (var ep in eventParticipants)
@@ -55,7 +55,7 @@ namespace WebApp.Controllers
                     });
                 }
             }
-            
+
             var paymentMethods = await _uow.PaymentMethodRepository.AllAsync();
             ViewBag.PaymentMethods = paymentMethods
                 .Select(p => new SelectListItem
@@ -80,7 +80,7 @@ namespace WebApp.Controllers
                 Event = eventEntity,
                 Participants = participants
             };
-            
+
             return View(vm);
         }
 
@@ -105,7 +105,8 @@ namespace WebApp.Controllers
         public IActionResult Create()
         {
             ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo");
-            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id", "AdditionalInfo");
+            ViewData["ParticipantId"] =
+                new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id", "AdditionalInfo");
             return View();
         }
 
@@ -128,15 +129,15 @@ namespace WebApp.Controllers
                 return View("Index", vmIndex);
             }
 
-            
 
             if (vm.ParticipantType == "private")
             {
-                if (string.IsNullOrWhiteSpace(vm.PersonalCode) || !System.Text.RegularExpressions.Regex.IsMatch(vm.PersonalCode, @"^\d{11}$"))
+                if (string.IsNullOrWhiteSpace(vm.PersonalCode) ||
+                    !System.Text.RegularExpressions.Regex.IsMatch(vm.PersonalCode, @"^\d{11}$"))
                 {
                     ModelState.AddModelError("PersonalCode", "Isikukood peab olema 11 numbrit.");
                 }
-                
+
                 var privatePerson = new PrivatePerson
                 {
                     Id = Guid.NewGuid(),
@@ -184,7 +185,7 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CreatePrivate(EventParticipantCreatePrivateViewModel vm)
         {
@@ -250,7 +251,7 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { eventId = vm.EventId });
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddExistingParticipant(Guid eventId, Guid participantId)
         {
@@ -293,7 +294,6 @@ namespace WebApp.Controllers
         }
 
 
-
         // GET: EventParticipants/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -307,8 +307,11 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.EventId);
-            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.ParticipantId);
+
+            ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo",
+                eventParticipant.EventId);
+            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id",
+                "AdditionalInfo", eventParticipant.ParticipantId);
             return View(eventParticipant);
         }
 
@@ -316,7 +319,8 @@ namespace WebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, [Bind("EventId,ParticipantId,Id")] EventParticipant eventParticipant)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("EventId,ParticipantId,Id")] EventParticipant eventParticipant)
         {
             if (id != eventParticipant.Id)
             {
@@ -341,10 +345,14 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.EventId);
-            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id", "AdditionalInfo", eventParticipant.ParticipantId);
+
+            ViewData["EventId"] = new SelectList(_uow.EventRepository.AllAsync().Result, "Id", "AdditionalInfo",
+                eventParticipant.EventId);
+            ViewData["ParticipantId"] = new SelectList(_uow.ParticipantRepository.AllAsync().Result, "Id",
+                "AdditionalInfo", eventParticipant.ParticipantId);
             return View(eventParticipant);
         }
 
@@ -357,7 +365,7 @@ namespace WebApp.Controllers
             }
 
             var eventParticipant = await _uow.EventParticipantRepository.FindAsync(id.Value);
-                
+
             if (eventParticipant == null)
             {
                 return NotFound();
@@ -381,15 +389,15 @@ namespace WebApp.Controllers
             _uow.EventParticipantRepository.Remove(eventParticipant);
             await _uow.SaveChangesAsync();
 
-            
+
             return RedirectToAction(nameof(Index), new { eventId = eventId });
         }
 
         private bool EventParticipantExists(Guid id)
         {
-            return (_uow.EventParticipantRepository.AllAsync().Result?.Any(e=>e.Id == id)).GetValueOrDefault();
+            return (_uow.EventParticipantRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        
+
         private async Task<EventParticipantViewModel> LoadEventParticipantViewModel(Guid eventId)
         {
             var eventEntity = await _uow.EventRepository.FindAsync(eventId);
@@ -398,7 +406,8 @@ namespace WebApp.Controllers
                 throw new Exception("Event not found");
             }
 
-            var eventParticipants = await _uow.EventParticipantRepository.AllAsync(eventId);
+            var eventParticipants =
+                await _uow.EventParticipantRepository.AllAsync(eventId) ?? new List<EventParticipant>();
             var participants = new List<ParticipantDisplayViewModel>();
 
             foreach (var ep in eventParticipants)
@@ -422,7 +431,8 @@ namespace WebApp.Controllers
                     });
                 }
             }
-            var paymentMethods = await _uow.PaymentMethodRepository.AllAsync();
+
+            var paymentMethods = await _uow.PaymentMethodRepository.AllAsync() ?? new List<PaymentMethod>();
             ViewBag.PaymentMethods = paymentMethods
                 .Select(p => new SelectListItem
                 {
@@ -430,13 +440,25 @@ namespace WebApp.Controllers
                     Text = p.Name
                 })
                 .ToList();
-            
+
+            var allParticipants = await _uow.ParticipantRepository.AllAsync() ?? new List<Participant>();
+            ViewBag.AllParticipants = allParticipants
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p is PrivatePerson privateP
+                        ? $"{privateP.FirstName} {privateP.LastName} ({privateP.PersonalCode})"
+                        : p is LegalPerson legalP
+                            ? $"{legalP.CompanyName} ({legalP.RegistryCode})"
+                            : "Tundmatu"
+                })
+                .ToList();
+
             return new EventParticipantViewModel
             {
                 Event = eventEntity,
                 Participants = participants
             };
         }
-
     }
 }

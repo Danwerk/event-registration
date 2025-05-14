@@ -1,3 +1,14 @@
+## Prerequisites
+- .NET 9 SDK 
+- SQLite DB 
+- Visual Studio 2022+ or Rider
+
+## SETUP
+git clone https://github.com/Danwerk/event-registration.git
+cd EventRegistration
+
+
+
 TODOs
 
 - Andmebaasi diagramm
