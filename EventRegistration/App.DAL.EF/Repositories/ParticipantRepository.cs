@@ -11,4 +11,11 @@ public class ParticipantRepository : EFBaseRepository<Participant, AppDbContext>
     {
     }
     
+    public override async Task<IEnumerable<Participant>> AllAsync()
+    {
+        return await RepositoryDbSet
+            .Include(e=>e.PaymentMethod)!
+            .ToListAsync();
+    }
+    
 }
