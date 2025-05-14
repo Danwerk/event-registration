@@ -14,6 +14,12 @@ code .
 ```
 2. Run F5
 
+## Tests
+```bash
+cd EventRegistration/Tests.WebApp
+dotnet test
+```
+
 
 # Architecture Overview
 
