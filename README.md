@@ -15,6 +15,7 @@ code .
 2. Run F5
 
 ## Tests
+To run tests:
 ```bash
 cd EventRegistration/Tests.WebApp
 dotnet test
