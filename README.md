@@ -114,3 +114,6 @@ dotnet aspnet-codegenerator controller -name EventsController       -actions -m 
 dotnet aspnet-codegenerator controller -name ParticipantsController       -actions -m  Participant    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 dotnet aspnet-codegenerator controller -name PaymentMethodsController       -actions -m  PaymentMethod    -dc AppDbContext -outDir Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 ```
+
+
+TIME SPENT ~17 - 20 hours
